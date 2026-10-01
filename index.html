@@ -2017,7 +2017,8 @@ setTimeout(paintEdges, 300);
 
 /* 캐릭터 페이지 이미지는 메인 화면이 뜬 뒤 미리 풀어 둠 (눌렀을 때 바로 보이도록) */
 const warm = [];
-(window.requestIdleCallback || (f => setTimeout(f, 800)))(() => {
+// 휴대폰·태블릿(터치 화면)에서는 하지 않음: 이미지 100여 장을 한꺼번에 풀면 메모리가 넘쳐 브라우저가 페이지를 강제로 닫음
+if (!matchMedia('(pointer: coarse)').matches) (window.requestIdleCallback || (f => setTimeout(f, 800)))(() => {
   Object.keys(IMG).filter(k => k.includes('/')).forEach((k, i) => setTimeout(() => {
     const im = new Image(); im.src = IMG[k]; im.decode?.().catch(() => {}); warm.push(im);
   }, i * 30));
