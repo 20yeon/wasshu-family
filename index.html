@@ -29,7 +29,7 @@
 
   /* ---------- 화면 전환 ---------- */
   /* 화면 전환: 지금 화면만 켜 두고(shown), 나머지는 display:none 으로 꺼서 메모리를 아낌 */
-  .view { position: fixed; inset: 0; opacity: 0; visibility: hidden; display: none; transition: opacity .45s ease, visibility 0s .45s; }
+  .view { position: fixed; left: 0; top: 0; width: var(--vw, 100%); height: var(--vh, 100%); opacity: 0; visibility: hidden; display: none; transition: opacity .45s ease, visibility 0s .45s; }
   .view.shown { display: block; }
   .view.on { opacity: 1; visibility: visible; transition: opacity .45s ease; }
   #vp { position: fixed; inset: 0; visibility: hidden; pointer-events: none; }
@@ -72,6 +72,8 @@
   .char { transition: transform .6s cubic-bezier(.35,1.25,.5,1); }
   .float { animation: float 3.6s ease-in-out infinite; }
   @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+  .char .bob { animation: floatT 3.6s ease-in-out infinite; }
+  @keyframes floatT { 0%,100% { translate: 0 0; } 50% { translate: 0 -14px; } }
   .char .def, .char .hov { transition: opacity .18s ease, transform .35s cubic-bezier(.3,1.6,.5,1); }
   .char .hov { opacity: 0; transform: scale(.94); }
   .char.hover .def { opacity: 0; }
@@ -120,6 +122,7 @@
   /* ---------- 캐릭터 소개 (PDF 한 장 = 16:9 슬라이드 한 칸) ---------- */
   #charPage { background: #fff; scroll-behavior: smooth; }
   .slide { position: relative; width: 100%; height: calc(var(--k, .5) * 1125px); overflow: hidden; background: center / 100% 100% no-repeat; }
+  .slide:not(.near) .st { display: none; }   /* 화면에서 멀리 있는 장은 그리지 않음 */
   .slide .st { position: absolute; left: var(--sl, 0px); top: 0; width: 2000px; height: 1125px; transform-origin: 0 0; transform: scale(var(--k, .5)); }
   /* 아이폰 가로 화면의 노치 쪽 여백을 재기 위한 보이지 않는 상자 */
   #safe { position: fixed; left: 0; top: 0; visibility: hidden; pointer-events: none;
@@ -241,7 +244,7 @@
 
   /* 캐릭터 소개 첫 장: 아래로 스크롤 안내 */
   .scroll-hint {
-    position: fixed; z-index: 9; left: 0; right: 0; bottom: 0; height: max(130px, calc(var(--k, .5) * 220px));
+    position: fixed; z-index: 9; left: 0; width: var(--vw, 100%); top: calc(var(--vh, 100vh) - max(130px, calc(var(--k, .5) * 220px))); height: max(130px, calc(var(--k, .5) * 220px));
     background: linear-gradient(to top, rgba(0,0,0,.5), rgba(0,0,0,.22) 55%, rgba(0,0,0,0));
     display: flex; align-items: flex-end; justify-content: center; padding-bottom: 16px;
     opacity: 0; pointer-events: none; transition: opacity .6s ease;
@@ -277,13 +280,29 @@
     #rotate:not(.skip) { display: flex; }
   }
 
+  /* ---------- 터치 기기: 흐림 효과(메모리를 많이 씀)를 가벼운 방식으로 ---------- */
+  @media (pointer: coarse) {
+    #main .backdrop { filter: none; opacity: .9; }
+    .cnav-in, .topbar { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(255,255,255,.92); }
+    .st .ellipse { filter: none; background-image: radial-gradient(closest-side, rgba(255,255,255,0) 30%, rgba(255,255,255,.55) 100%); }
+    .st .blur { filter: none; opacity: .35; }
+    .scroll-hint { filter: none; }
+  }
+  @media (pointer: coarse) {
+    .slide .st { opacity: 0; transition: opacity .7s ease; }
+    .slide.in .st { opacity: 1; }
+  }
+  /* 화면 크기 확인용 (주소 끝에 ?debug) */
+  #dbg { position: fixed; z-index: 200; left: 8px; top: 8px; background: rgba(0,0,0,.75); color: #fff; font: 12px/1.4 monospace;
+    padding: 8px 10px; border-radius: 8px; white-space: pre; pointer-events: none; }
+
   /* ---------- 가로로 든 휴대폰 (화면 높이가 낮을 때) ---------- */
   @media (max-height: 520px) {
     .cnav { padding: 0 max(10px, env(safe-area-inset-right)) 0 10px; }
     .cnav-in { margin-top: 8px; gap: 4px; padding: 4px; }
     .cnav .mini { width: 32px; height: 32px; border-width: 2px; }
     .cnav .back-btn { height: 32px; font-size: 13px; padding: 0 12px; }
-    .scroll-hint { height: 90px; padding-bottom: 8px; }
+    .scroll-hint { height: 90px; top: calc(var(--vh, 100vh) - 90px); padding-bottom: 8px; }
     .scroll-hint button { width: 150px; }
     .fs-btn { width: 36px; height: 36px; right: 10px; bottom: 10px; }
   }
@@ -340,7 +359,7 @@
 </button>
 
 <script>
-const IMG = {"L1": "img/L1.webp", "L10": "img/L10.webp", "L11": "img/L11.webp", "L12": "img/L12.webp", "L13": "img/L13.webp", "L14": "img/L14.webp", "L15": "img/L15.webp", "L16": "img/L16.webp", "L17": "img/L17.webp", "L18": "img/L18.webp", "L19": "img/L19.webp", "L2": "img/L2.webp", "L20": "img/L20.webp", "L21": "img/L21.webp", "L22": "img/L22.webp", "L23": "img/L23.webp", "L24": "img/L24.webp", "L25": "img/L25.webp", "L26": "img/L26.webp", "L27": "img/L27.webp", "L28": "img/L28.webp", "L29": "img/L29.webp", "L3": "img/L3.webp", "L30": "img/L30.webp", "L31": "img/L31.webp", "L32": "img/L32.webp", "L4": "img/L4.webp", "L5": "img/L5.webp", "L6": "img/L6.webp", "L7": "img/L7.webp", "L8": "img/L8.webp", "L9": "img/L9.webp", "blue/bg01": "img/blue/bg01.webp", "blue/bg03": "img/blue/bg03.webp", "blue/bg04": "img/blue/bg04.webp", "blue/bg06": "img/blue/bg06.webp", "blue/bg07": "img/blue/bg07.webp", "blue/bg08": "img/blue/bg08.webp", "blue/rel_blue": "img/blue/rel_blue.webp", "blue/rel_duck": "img/blue/rel_duck.webp", "blue/rel_lotus": "img/blue/rel_lotus.webp", "blue/rel_owl": "img/blue/rel_owl.webp", "blue/star": "img/blue/star.webp", "blue/turn_title": "img/blue/turn_title.webp", "blue/x1": "img/blue/x1.webp", "blue/x10": "img/blue/x10.webp", "blue/x11": "img/blue/x11.webp", "blue/x12_04": "img/blue/x12_04.webp", "blue/x12_06": "img/blue/x12_06.webp", "blue/x12_07": "img/blue/x12_07.webp", "blue/x14": "img/blue/x14.webp", "blue/x16": "img/blue/x16.webp", "blue/x17": "img/blue/x17.webp", "blue/x19": "img/blue/x19.webp", "blue/x2": "img/blue/x2.webp", "blue/x20": "img/blue/x20.webp", "blue/x3": "img/blue/x3.webp", "blue/x4": "img/blue/x4.webp", "blue/x5_04": "img/blue/x5_04.webp", "blue/x5_05": "img/blue/x5_05.webp", "blue/x5_06": "img/blue/x5_06.webp", "blue/x5_08": "img/blue/x5_08.webp", "blue/x6": "img/blue/x6.webp", "blue/x7": "img/blue/x7.webp", "blue/x8": "img/blue/x8.webp", "blue/x8b": "img/blue/x8b.webp", "blue/x9": "img/blue/x9.webp", "duck/big": "img/duck/big.webp", "duck/x10": "img/duck/x10.webp", "duck/x11": "img/duck/x11.webp", "duck/x12": "img/duck/x12.webp", "duck/x15": "img/duck/x15.webp", "duck/x16": "img/duck/x16.webp", "duck/x17": "img/duck/x17.webp", "duck/x18": "img/duck/x18.webp", "duck/x19": "img/duck/x19.webp", "duck/x1_02": "img/duck/x1_02.webp", "duck/x20": "img/duck/x20.webp", "duck/x21": "img/duck/x21.webp", "duck/x23_01": "img/duck/x23_01.webp", "duck/x23_03": "img/duck/x23_03.webp", "duck/x23_04": "img/duck/x23_04.webp", "duck/x28": "img/duck/x28.webp", "duck/x2_02": "img/duck/x2_02.webp", "duck/x4": "img/duck/x4.webp", "duck/x6": "img/duck/x6.webp", "duck/x7": "img/duck/x7.webp", "duck/x9": "img/duck/x9.webp", "duck/xp": "img/duck/xp.webp", "lotus/big": "img/lotus/big.webp", "lotus/x1": "img/lotus/x1.webp", "lotus/x10": "img/lotus/x10.webp", "lotus/x11": "img/lotus/x11.webp", "lotus/x117": "img/lotus/x117.webp", "lotus/x12": "img/lotus/x12.webp", "lotus/x13": "img/lotus/x13.webp", "lotus/x14": "img/lotus/x14.webp", "lotus/x15": "img/lotus/x15.webp", "lotus/x16": "img/lotus/x16.webp", "lotus/x2": "img/lotus/x2.webp", "lotus/x25": "img/lotus/x25.webp", "lotus/x3": "img/lotus/x3.webp", "lotus/x4": "img/lotus/x4.webp", "lotus/x5": "img/lotus/x5.webp", "lotus/x6": "img/lotus/x6.webp", "lotus/x7_01": "img/lotus/x7_01.webp", "lotus/x7_03": "img/lotus/x7_03.webp", "lotus/x7_04": "img/lotus/x7_04.webp", "lotus/x8": "img/lotus/x8.webp", "lotus/xp": "img/lotus/xp.webp", "lotus/xp_copy": "img/lotus/xp_copy.webp", "map/bg_a": "img/map/bg_a.webp", "map/bg_b": "img/map/bg_b.webp", "map/bg_c": "img/map/bg_c.webp", "map/btn_12": "img/map/btn_12.webp", "map/btn_stamp": "img/map/btn_stamp.webp", "map/card_12": "img/map/card_12.webp", "map/card_stamp": "img/map/card_stamp.webp", "map/cloud": "img/map/cloud.webp", "map/f15": "img/map/f15.webp", "map/f16": "img/map/f16.webp", "map/f17": "img/map/f17.webp", "map/f18": "img/map/f18.webp", "map/line": "img/map/line.webp", "map/map": "img/map/map.webp", "map/p_bonggoksa": "img/map/p_bonggoksa.webp", "map/p_dogo": "img/map/p_dogo.webp", "map/p_flower": "img/map/p_flower.webp", "map/p_gokgyo": "img/map/p_gokgyo.webp", "map/p_gongseri": "img/map/p_gongseri.webp", "map/p_hyeonchungsa": "img/map/p_hyeonchungsa.webp", "map/p_jijunghae": "img/map/p_jijunghae.webp", "map/p_market": "img/map/p_market.webp", "map/p_museum": "img/map/p_museum.webp", "map/p_oeam": "img/map/p_oeam.webp", "map/p_onyang": "img/map/p_onyang.webp", "map/p_pinnacle": "img/map/p_pinnacle.webp", "map/p_sinjeongho": "img/map/p_sinjeongho.webp", "map/p_spavis": "img/map/p_spavis.webp", "map/p_yeonginsan": "img/map/p_yeonginsan.webp", "owl/big": "img/owl/big.webp", "owl/x1": "img/owl/x1.webp", "owl/x10": "img/owl/x10.webp", "owl/x11": "img/owl/x11.webp", "owl/x13": "img/owl/x13.webp", "owl/x15": "img/owl/x15.webp", "owl/x16": "img/owl/x16.webp", "owl/x17": "img/owl/x17.webp", "owl/x18": "img/owl/x18.webp", "owl/x19_01": "img/owl/x19_01.webp", "owl/x19_03": "img/owl/x19_03.webp", "owl/x19_04": "img/owl/x19_04.webp", "owl/x28": "img/owl/x28.webp", "owl/x3": "img/owl/x3.webp", "owl/x4": "img/owl/x4.webp", "owl/x5": "img/owl/x5.webp", "owl/x6": "img/owl/x6.webp", "owl/x7": "img/owl/x7.webp", "owl/x8": "img/owl/x8.webp", "owl/x9": "img/owl/x9.webp", "owl/xp_copy": "img/owl/xp_copy.webp", "ui/scroll": "img/ui/scroll.webp", "font/jua-sub": "img/jua-sub.woff2"};
+const IMG = {"L1": "img/L1.webp", "L10": "img/L10.webp", "L11": "img/L11.webp", "L12": "img/L12.webp", "L13": "img/L13.webp", "L14": "img/L14.webp", "L15": "img/L15.webp", "L16": "img/L16.webp", "L17": "img/L17.webp", "L18": "img/L18.webp", "L19": "img/L19.webp", "L2": "img/L2.webp", "L20": "img/L20.webp", "L21": "img/L21.webp", "L22": "img/L22.webp", "L23": "img/L23.webp", "L24": "img/L24.webp", "L25": "img/L25.webp", "L26": "img/L26.webp", "L27": "img/L27.webp", "L28": "img/L28.webp", "L29": "img/L29.webp", "L3": "img/L3.webp", "L30": "img/L30.webp", "L31": "img/L31.webp", "L32": "img/L32.webp", "L4": "img/L4.webp", "L5": "img/L5.webp", "L6": "img/L6.webp", "L7": "img/L7.webp", "L8": "img/L8.webp", "L9": "img/L9.webp", "blue/bg01": "img/blue/bg01.webp", "blue/bg03": "img/blue/bg03.webp", "blue/bg04": "img/blue/bg04.webp", "blue/bg06": "img/blue/bg06.webp", "blue/bg07": "img/blue/bg07.webp", "blue/bg08": "img/blue/bg08.webp", "blue/rel_blue": "img/blue/rel_blue.webp", "blue/rel_duck": "img/blue/rel_duck.webp", "blue/rel_lotus": "img/blue/rel_lotus.webp", "blue/rel_owl": "img/blue/rel_owl.webp", "blue/star": "img/blue/star.webp", "blue/turn_title": "img/blue/turn_title.webp", "blue/x1": "img/blue/x1.webp", "blue/x10": "img/blue/x10.webp", "blue/x11": "img/blue/x11.webp", "blue/x12_04": "img/blue/x12_04.webp", "blue/x12_06": "img/blue/x12_06.webp", "blue/x12_07": "img/blue/x12_07.webp", "blue/x14": "img/blue/x14.webp", "blue/x16": "img/blue/x16.webp", "blue/x17": "img/blue/x17.webp", "blue/x19": "img/blue/x19.webp", "blue/x2": "img/blue/x2.webp", "blue/x20": "img/blue/x20.webp", "blue/x3": "img/blue/x3.webp", "blue/x4": "img/blue/x4.webp", "blue/x5_04": "img/blue/x5_04.webp", "blue/x5_05": "img/blue/x5_05.webp", "blue/x5_06": "img/blue/x5_06.webp", "blue/x5_08": "img/blue/x5_08.webp", "blue/x6": "img/blue/x6.webp", "blue/x7": "img/blue/x7.webp", "blue/x8": "img/blue/x8.webp", "blue/x8b": "img/blue/x8b.webp", "blue/x9": "img/blue/x9.webp", "duck/big": "img/duck/big.webp", "duck/x10": "img/duck/x10.webp", "duck/x11": "img/duck/x11.webp", "duck/x12": "img/duck/x12.webp", "duck/x15": "img/duck/x15.webp", "duck/x16": "img/duck/x16.webp", "duck/x17": "img/duck/x17.webp", "duck/x18": "img/duck/x18.webp", "duck/x19": "img/duck/x19.webp", "duck/x1_02": "img/duck/x1_02.webp", "duck/x20": "img/duck/x20.webp", "duck/x21": "img/duck/x21.webp", "duck/x23_01": "img/duck/x23_01.webp", "duck/x23_03": "img/duck/x23_03.webp", "duck/x23_04": "img/duck/x23_04.webp", "duck/x28": "img/duck/x28.webp", "duck/x2_02": "img/duck/x2_02.webp", "duck/x4": "img/duck/x4.webp", "duck/x6": "img/duck/x6.webp", "duck/x7": "img/duck/x7.webp", "duck/x9": "img/duck/x9.webp", "duck/xp": "img/duck/xp.webp", "lotus/big": "img/lotus/big.webp", "lotus/x1": "img/lotus/x1.webp", "lotus/x10": "img/lotus/x10.webp", "lotus/x11": "img/lotus/x11.webp", "lotus/x117": "img/lotus/x117.webp", "lotus/x12": "img/lotus/x12.webp", "lotus/x13": "img/lotus/x13.webp", "lotus/x14": "img/lotus/x14.webp", "lotus/x15": "img/lotus/x15.webp", "lotus/x16": "img/lotus/x16.webp", "lotus/x2": "img/lotus/x2.webp", "lotus/x25": "img/lotus/x25.webp", "lotus/x3": "img/lotus/x3.webp", "lotus/x4": "img/lotus/x4.webp", "lotus/x5": "img/lotus/x5.webp", "lotus/x6": "img/lotus/x6.webp", "lotus/x7_01": "img/lotus/x7_01.webp", "lotus/x7_03": "img/lotus/x7_03.webp", "lotus/x7_04": "img/lotus/x7_04.webp", "lotus/x8": "img/lotus/x8.webp", "lotus/xp": "img/lotus/xp.webp", "lotus/xp_copy": "img/lotus/xp_copy.webp", "map/bg_a": "img/map/bg_a.webp", "map/bg_b": "img/map/bg_b.webp", "map/bg_c": "img/map/bg_c.webp", "map/btn_12": "img/map/btn_12.webp", "map/btn_stamp": "img/map/btn_stamp.webp", "map/card_12": "img/map/card_12.webp", "map/card_stamp": "img/map/card_stamp.webp", "map/cloud": "img/map/cloud.webp", "map/f15": "img/map/f15.webp", "map/f16": "img/map/f16.webp", "map/f17": "img/map/f17.webp", "map/f18": "img/map/f18.webp", "map/line": "img/map/line.webp", "map/map": "img/map/map.webp", "map/p_bonggoksa": "img/map/p_bonggoksa.webp", "map/p_dogo": "img/map/p_dogo.webp", "map/p_flower": "img/map/p_flower.webp", "map/p_gokgyo": "img/map/p_gokgyo.webp", "map/p_gongseri": "img/map/p_gongseri.webp", "map/p_hyeonchungsa": "img/map/p_hyeonchungsa.webp", "map/p_jijunghae": "img/map/p_jijunghae.webp", "map/p_market": "img/map/p_market.webp", "map/p_museum": "img/map/p_museum.webp", "map/p_oeam": "img/map/p_oeam.webp", "map/p_onyang": "img/map/p_onyang.webp", "map/p_pinnacle": "img/map/p_pinnacle.webp", "map/p_sinjeongho": "img/map/p_sinjeongho.webp", "map/p_spavis": "img/map/p_spavis.webp", "map/p_yeonginsan": "img/map/p_yeonginsan.webp", "owl/big": "img/owl/big.webp", "owl/x1": "img/owl/x1.webp", "owl/x10": "img/owl/x10.webp", "owl/x11": "img/owl/x11.webp", "owl/x13": "img/owl/x13.webp", "owl/x15": "img/owl/x15.webp", "owl/x16": "img/owl/x16.webp", "owl/x17": "img/owl/x17.webp", "owl/x18": "img/owl/x18.webp", "owl/x19_01": "img/owl/x19_01.webp", "owl/x19_03": "img/owl/x19_03.webp", "owl/x19_04": "img/owl/x19_04.webp", "owl/x28": "img/owl/x28.webp", "owl/x3": "img/owl/x3.webp", "owl/x4": "img/owl/x4.webp", "owl/x5": "img/owl/x5.webp", "owl/x6": "img/owl/x6.webp", "owl/x7": "img/owl/x7.webp", "owl/x8": "img/owl/x8.webp", "owl/x9": "img/owl/x9.webp", "owl/xp_copy": "img/owl/xp_copy.webp", "ui/scroll": "img/ui/scroll.webp", "m/blue_0_0": "img/m/blue_0_0.webp", "m/blue_1_1": "img/m/blue_1_1.webp", "m/blue_2_2": "img/m/blue_2_2.webp", "m/blue_3_3": "img/m/blue_3_3.webp", "m/blue_4_4": "img/m/blue_4_4.webp", "m/blue_5_5": "img/m/blue_5_5.webp", "m/blue_6_6": "img/m/blue_6_6.webp", "m/lotus_0_7": "img/m/lotus_0_7.webp", "m/lotus_1_8": "img/m/lotus_1_8.webp", "m/lotus_2_9": "img/m/lotus_2_9.webp", "m/lotus_3_10": "img/m/lotus_3_10.webp", "m/lotus_4_11": "img/m/lotus_4_11.webp", "m/lotus_5_12": "img/m/lotus_5_12.webp", "m/lotus_6_13": "img/m/lotus_6_13.webp", "m/duck_0_14": "img/m/duck_0_14.webp", "m/duck_1_15": "img/m/duck_1_15.webp", "m/duck_2_16": "img/m/duck_2_16.webp", "m/duck_3_17": "img/m/duck_3_17.webp", "m/duck_4_18": "img/m/duck_4_18.webp", "m/duck_5_19": "img/m/duck_5_19.webp", "m/duck_6_20": "img/m/duck_6_20.webp", "m/owl_0_21": "img/m/owl_0_21.webp", "m/owl_1_22": "img/m/owl_1_22.webp", "m/owl_2_23": "img/m/owl_2_23.webp", "m/owl_3_24": "img/m/owl_3_24.webp", "m/owl_4_25": "img/m/owl_4_25.webp", "m/owl_5_26": "img/m/owl_5_26.webp", "m/owl_6_27": "img/m/owl_6_27.webp", "font/jua-sub": "img/jua-sub.woff2"};
 // 웹 버전에서 휴대폰·태블릿이면 더 작은 이미지(img-m/)를 씀 — 메모리 절약
 if (matchMedia('(pointer: coarse)').matches) for (const k in IMG) if (/^img\/.*\.webp$/.test(IMG[k])) IMG[k] = IMG[k].replace(/^img\//, 'img-m/');
 const PAGES = {
@@ -1475,6 +1494,9 @@ const PAGES = {
   ]
  ]
 };
+// 웹 버전 + 휴대폰: 장마다 움직이지 않는 레이어를 미리 합친 데이터로 (없으면 null)
+const PAGES_M = {"blue": [[{"src": "blue/bg01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"src": "blue/x6", "x": 702, "y": 262, "w": 287, "cls": "spin"}, {"src": "blue/x7", "x": 1761, "y": 82, "w": 287, "cls": "spin"}, {"src": "blue/star", "x": -2, "y": 594, "w": 320, "cls": "spin"}, {"src": "blue/x14", "x": 178, "y": 958, "w": 424, "cls": "shadow"}, {"src": "blue/x11", "x": 19, "y": 117, "w": 821, "cls": "hero"}, {"src": "m/blue_0_0", "x": 33, "y": 20, "w": 1924, "cls": "flat"}, {"src": "blue/x8", "x": 638, "y": 105, "w": 423, "cls": "pop"}, {"src": "blue/x8b", "x": 844, "y": 780, "w": 375, "cls": "sticker"}, {"src": "blue/x9", "x": 1224, "y": 760, "w": 364, "cls": "sticker"}, {"src": "blue/x10", "x": 1594, "y": 775, "w": 360, "cls": "sticker"}], [{"src": "m/blue_1_1", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_2_2", "x": 74, "y": 64, "w": 1524, "cls": "flat"}], [{"src": "m/blue_3_3", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_4_4", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_5_5", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_6_6", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "blue/x5_08", "x": 78, "y": 82, "w": 277, "cls": "tag"}]], "lotus": [[{"src": "lotus/x7_01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"box": "ellipse", "x": 250, "y": 961, "w": 400, "h": 68, "color": "#2fa3e3"}, {"src": "lotus/x1", "x": 718, "y": 292, "w": 239, "cls": "spin"}, {"src": "lotus/x2", "x": -55, "y": 700, "w": 283, "cls": "spin"}, {"src": "lotus/x3", "x": 1718, "y": 90, "w": 283, "cls": "spin"}, {"src": "lotus/big", "x": 179, "y": 343, "w": 566, "rot": 0, "cls": "hero"}, {"src": "m/lotus_0_7", "x": 33, "y": 20, "w": 1924, "cls": "flat"}, {"src": "lotus/x25", "x": 508, "y": 137, "w": 464, "cls": "pop"}, {"src": "lotus/x4", "x": 872, "y": 730, "w": 354, "cls": "sticker"}, {"src": "lotus/x5", "x": 1218, "y": 764, "w": 360, "cls": "sticker"}, {"src": "lotus/x6", "x": 1587, "y": 734, "w": 327, "cls": "sticker"}], [{"src": "m/lotus_1_8", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_2_9", "x": 74, "y": 64, "w": 1516, "cls": "flat"}], [{"src": "m/lotus_3_10", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_4_11", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_5_12", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_6_13", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "lotus/x13", "x": 78, "y": 82, "w": 278, "cls": "tag"}]], "duck": [[{"src": "duck/x23_01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"box": "ellipse", "x": 230, "y": 971, "w": 380, "h": 64, "color": "#e2559c"}, {"src": "duck/x4", "x": 1748, "y": 76, "w": 322, "cls": "spin"}, {"src": "duck/x2_02", "x": -30, "y": 690, "w": 321, "cls": "spin"}, {"src": "duck/xp", "x": 546, "y": 308, "w": 321, "cls": "spin"}, {"src": "duck/big", "x": 128, "y": 214, "w": 594, "rot": 0, "cls": "hero"}, {"src": "m/duck_0_14", "x": 32, "y": 20, "w": 1925, "cls": "flat"}, {"src": "duck/x28", "x": 584, "y": 93, "w": 425, "cls": "pop"}, {"src": "duck/x7", "x": 958, "y": 750, "w": 279, "cls": "sticker"}, {"src": "duck/x9", "x": 1254, "y": 736, "w": 284, "cls": "sticker"}, {"src": "duck/x10", "x": 1568, "y": 732, "w": 289, "cls": "sticker"}], [{"src": "m/duck_1_15", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_2_16", "x": 74, "y": 64, "w": 1516, "cls": "flat"}], [{"src": "m/duck_3_17", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_4_18", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_5_19", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_6_20", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "duck/x17", "x": 77, "y": 82, "w": 278, "cls": "tag"}]], "owl": [[{"src": "owl/x19_01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"box": "ellipse", "x": 253, "y": 961, "w": 390, "h": 68, "color": "#4dba6c"}, {"src": "owl/xp_copy", "x": 1745, "y": 40, "w": 300, "cls": "sway blur", "rot": 160}, {"src": "owl/xp_copy", "x": 745, "y": 330, "w": 230, "cls": "sway blur", "rot": -40}, {"src": "owl/x1", "x": 372, "y": 250, "w": 210, "cls": "sway"}, {"src": "owl/xp_copy", "x": -26, "y": 718, "w": 315, "cls": "sway"}, {"src": "owl/big", "x": -1, "y": 310, "w": 858, "rot": 25, "cls": "hero"}, {"src": "m/owl_0_21", "x": 32, "y": 20, "w": 1925, "cls": "flat"}, {"src": "owl/x28", "x": 537, "y": 137, "w": 436, "cls": "pop"}, {"src": "owl/x5", "x": 804, "y": 725, "w": 397, "cls": "sticker"}, {"src": "owl/x6", "x": 1204, "y": 728, "w": 352, "cls": "sticker"}, {"src": "owl/x7", "x": 1539, "y": 734, "w": 388, "cls": "sticker"}], [{"src": "m/owl_1_22", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_2_23", "x": 74, "y": 64, "w": 1516, "cls": "flat"}], [{"src": "m/owl_3_24", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_4_25", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_5_26", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_6_27", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "owl/x13", "x": 78, "y": 83, "w": 277, "cls": "tag"}]]};
+const TOUCH = matchMedia('(pointer: coarse)').matches;
 
 /* 좌표는 모두 2000 × 1125 목업 기준 (x, y, 폭) */
 const DECOR = [
@@ -1532,7 +1554,7 @@ function layer(cls) {
 
 /* ---- 쌓는 순서 (아래 → 위) ---- */
 place(layer(), ['L1', 0, 0, 2000]);
-place(layer('clouds'), ['L11', 36, 87, 1871]);
+place(layer(), ['L11', 36, 87, 1871, 'clouds']);
 const deco = layer();
 DECOR.forEach(d => { place(deco, d).style.animationDelay = (-Math.random() * 8).toFixed(2) + 's'; });
 const bldgDeco = layer();
@@ -1551,8 +1573,7 @@ CHARS.forEach(c => {
   const cx = x + w / 2, cy = y + w * 0.55;
   wrap.style.transformOrigin = cx + 'px ' + cy + 'px';
   const fl = document.createElement('div');
-  fl.className = 'layer float';
-  fl.style.animationDelay = c.delay + 's';
+  fl.className = 'layer';   // 둥실 효과는 화면 전체 크기 상자가 아니라 그림마다 줌 (메모리 절약)
   wrap.appendChild(fl);
   c.wrap = wrap;
   c.defEl = place(fl, c.def); c.defEl.classList.add('def');
@@ -1560,6 +1581,7 @@ CHARS.forEach(c => {
   c.sayEl = place(fl, c.say); c.sayEl.classList.add('say');
   c.hovEl.style.transformOrigin = '50% 60%';
   c.sayEl.style.transformOrigin = '20% 100%';
+  [c.defEl, c.hovEl, c.sayEl].forEach(im => { im.classList.add('bob'); im.style.animationDelay = c.delay + 's'; });
 });
 
 place(layer(), ['L10', 712, 489, 585]);
@@ -1571,10 +1593,18 @@ function safe() {
   const cs = getComputedStyle(document.getElementById('safe'));
   return { l: parseFloat(cs.paddingLeft) || 0, r: parseFloat(cs.paddingRight) || 0, t: parseFloat(cs.paddingTop) || 0, b: parseFloat(cs.paddingBottom) || 0 };
 }
+/* 화면 크기: 아이폰 크롬은 값마다 조금씩 다르게(작게) 알려 줘서, 가장 큰 값을 실제 화면 크기로 보고
+   화면 상자(--vw, --vh)를 그 크기로 직접 늘림 → 오른쪽·아래에 띠가 생기지 않고 가운데도 맞음 */
+function screenSize() {
+  const r = document.getElementById('vp').getBoundingClientRect(), vv = window.visualViewport;
+  const W = Math.max(r.width, innerWidth, document.documentElement.clientWidth, vv ? vv.width : 0);
+  const H = Math.max(r.height, innerHeight, document.documentElement.clientHeight, vv ? vv.height : 0);
+  document.documentElement.style.setProperty('--vw', W + 'px');
+  document.documentElement.style.setProperty('--vh', H + 'px');
+  return { W, H };
+}
 function fitBox() {   // 화면 전체(노치 쪽 여백 포함)를 다 씀
-  // 아이폰 크롬은 innerHeight 값이 실제 보이는 높이보다 작게 나올 때가 있어서, 화면에 꽉 찬 메인 화면 상자의 실제 크기를 씀
-  const r = document.getElementById('vp').getBoundingClientRect();
-  const W = r.width || innerWidth, H = r.height || innerHeight;
+  const { W, H } = screenSize();
   const k = Math.min(W / 2000, H / 1125);
   return { k, x: (W - 2000 * k) / 2, y: (H - 1125 * k) / 2 };
 }
@@ -1614,10 +1644,14 @@ function toLocal(el, px, py) {
   let p = new DOMPoint(px, py);
   for (const n of chain) {
     const cs = getComputedStyle(n);
-    if (cs.transform && cs.transform !== 'none') {
+    const hasT = cs.transform && cs.transform !== 'none', tr = cs.translate && cs.translate !== 'none' ? cs.translate.split(' ').map(parseFloat) : null;
+    if (hasT || tr) {
       const [ox, oy] = cs.transformOrigin.split(' ').map(parseFloat);
       const ol = n.offsetLeft, ot = n.offsetTop;
-      const m = new DOMMatrix().translate(ol + ox, ot + oy).multiply(new DOMMatrix(cs.transform)).translate(-(ol + ox), -(ot + oy));
+      let m = new DOMMatrix().translate(ol + ox, ot + oy);
+      if (tr) m = m.translate(tr[0] || 0, tr[1] || 0);
+      if (hasT) m = m.multiply(new DOMMatrix(cs.transform));
+      m = m.translate(-(ol + ox), -(ot + oy));
       p = m.inverse().transformPoint(p);
     }
   }
@@ -1727,12 +1761,15 @@ document.querySelectorAll('.cnav-in').forEach(nav => ['blue', 'duck', 'lotus', '
   nav.appendChild(b);
 }));
 
+const nearObserver = new IntersectionObserver(es => es.forEach(e => {
+  e.target.classList.toggle('near', e.isIntersecting);
+}), { root: charPage, rootMargin: '120% 0px 120% 0px' });
 const slideObserver = new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) e.target.classList.add('in');
 }), { root: charPage, threshold: .35 });
 
 function fitSlides() {
-  const w = slidesEl.clientWidth || document.getElementById('vp').getBoundingClientRect().width;
+  const w = slidesEl.clientWidth || screenSize().W;
   charPage.style.setProperty('--k', w / 2000);   // 노치 쪽까지 꽉 채움
 }
 addEventListener('resize', fitSlides);
@@ -1772,7 +1809,7 @@ function fillChar(c) {
   if (shownChar === c.key) { resetHint(); return Promise.resolve(); }
   shownChar = c.key;
   slidesEl.innerHTML = '';
-  PAGES[c.key].forEach((items, si) => {
+  ((TOUCH && PAGES_M) ? PAGES_M : PAGES)[c.key].forEach((items, si) => {
     const slide = document.createElement('div');
     slide.className = 'slide';
     const bgItem = items.find(it => it.cls === 'bg' || it.box === 'fill');
@@ -1820,6 +1857,8 @@ function fillChar(c) {
     });
     slidesEl.appendChild(slide);
     slideObserver.observe(slide);
+    nearObserver.observe(slide);
+    if (si < 2) slide.classList.add('near');
   });
   fitSlides();
   resetHint();
@@ -2044,6 +2083,20 @@ if (!matchMedia('(pointer: coarse)').matches) (window.requestIdleCallback || (f 
     const im = new Image(); im.src = IMG[k]; im.decode?.().catch(() => {}); warm.push(im);
   }, i * 30));
 });
+
+/* ---- ?debug: 화면 크기 값 표시 (휴대폰에서 문제 확인용) ---- */
+if (/[?&]debug/.test(location.search)) {
+  const d = document.createElement('div'); d.id = 'dbg'; document.body.appendChild(d);
+  const upd = () => {
+    const r = document.getElementById('vp').getBoundingClientRect(), vv = window.visualViewport, sf = safe();
+    d.textContent = [`inner ${innerWidth}x${innerHeight}`, `vp ${Math.round(r.width)}x${Math.round(r.height)}`,
+      `client ${document.documentElement.clientWidth}x${document.documentElement.clientHeight}`,
+      vv ? `visual ${Math.round(vv.width)}x${Math.round(vv.height)} off ${Math.round(vv.offsetLeft)},${Math.round(vv.offsetTop)} s${vv.scale.toFixed(2)}` : 'visual -',
+      `screen ${screen.width}x${screen.height} dpr ${devicePixelRatio}`, `safe l${sf.l} r${sf.r} t${sf.t} b${sf.b}`,
+      `use ${getComputedStyle(document.documentElement).getPropertyValue('--vw')} x ${getComputedStyle(document.documentElement).getPropertyValue('--vh')}`].join('\n');
+  };
+  upd(); setInterval(upd, 500);
+}
 
 /* ---- 전체화면 버튼 (마우스를 움직일 때만 잠깐 보임) ---- */
 const fsBtn = document.getElementById('fsBtn');
