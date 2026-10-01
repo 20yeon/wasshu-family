@@ -1566,7 +1566,9 @@ function safe() {
   return { l: parseFloat(cs.paddingLeft) || 0, r: parseFloat(cs.paddingRight) || 0, t: parseFloat(cs.paddingTop) || 0, b: parseFloat(cs.paddingBottom) || 0 };
 }
 function fitBox() {   // 화면 전체(노치 쪽 여백 포함)를 다 씀
-  const W = innerWidth, H = innerHeight;
+  // 아이폰 크롬은 innerHeight 값이 실제 보이는 높이보다 작게 나올 때가 있어서, 화면에 꽉 찬 메인 화면 상자의 실제 크기를 씀
+  const r = document.getElementById('main').getBoundingClientRect();
+  const W = r.width || innerWidth, H = r.height || innerHeight;
   const k = Math.min(W / 2000, H / 1125);
   return { k, x: (W - 2000 * k) / 2, y: (H - 1125 * k) / 2 };
 }
@@ -1714,6 +1716,7 @@ function fitSlides() {
 }
 addEventListener('resize', fitSlides);
 // 휴대폰을 돌린 직후에는 노치 여백 값이 늦게 바뀌어서 한 번 더 맞춤
+if (window.visualViewport) visualViewport.addEventListener('resize', () => { fit(); fitMap(); fitSlides(); });
 addEventListener('orientationchange', () => setTimeout(() => { fit(); fitMap(); fitSlides(); }, 350));
 
 /* 아래로 스크롤 안내: 처음엔 1.2초 뒤 나타남 → 스크롤하면 사라짐 → 스크롤이 2.5초 멈췄는데
@@ -2001,6 +2004,8 @@ function paintEdges() {
   const g = `linear-gradient(${stops.map((c, i) => `${c} ${(i / 15 * 100).toFixed(1)}%`).join(', ')})`;
   document.documentElement.style.background = g;
   document.documentElement.style.backgroundAttachment = 'fixed';
+  // 아이폰 브라우저는 페이지 밖 여백을 "단색 배경색"으로 칠하므로 가운데 색을 단색으로도 지정
+  document.documentElement.style.backgroundColor = stops[8];
   document.body.style.background = 'transparent';
 }
 let edgeRaf = 0;
