@@ -131,7 +131,7 @@
   .st .blur { filter: blur(6px); opacity: .6; }
 
   .st .hero { animation: heroFloat 3.6s ease-in-out infinite; }
-  @keyframes heroFloat { 0%,100% { translate: 0 0; } 50% { translate: 0 -22px; } }
+  @keyframes heroFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-22px); } }   /* 오래된 아이폰에서도 되도록 transform 사용 */
   .st .shadow { animation: shadow 3.6s ease-in-out infinite; transform-origin: 50% 50%; }
   @keyframes shadow { 0%,100% { transform: scaleX(1); opacity: .85; } 50% { transform: scaleX(.86); opacity: .6; } }
   .st .twinkle { animation: twinkle 3s ease-in-out infinite alternate; }
@@ -246,7 +246,7 @@
   .scroll-hint button { border: 0; padding: 0; background: none; cursor: pointer; width: max(180px, calc(var(--k, .5) * 330px)); }
   .scroll-hint img { width: 100%; display: block; }
   .scroll-hint.bob button { animation: hintFloat 3.6s ease-in-out infinite; }   /* 큰 캐릭터와 같은 주기·높이로 둥실 */
-  @keyframes hintFloat { 0%,100% { translate: 0 0; } 50% { translate: 0 calc(var(--k, .5) * -22px); } }
+  @keyframes hintFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(calc(var(--k, .5) * -22px)); } }
   #charPage.hint-on .scroll-hint { opacity: 1; }
   #charPage.hint-on .scroll-hint button { pointer-events: auto; }
 
@@ -285,9 +285,6 @@
     .fs-btn { width: 36px; height: 36px; right: 10px; bottom: 10px; }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
-  }
 </style>
 </head>
 <body>
@@ -1568,10 +1565,10 @@ function safe() {
   const cs = getComputedStyle(document.getElementById('safe'));
   return { l: parseFloat(cs.paddingLeft) || 0, r: parseFloat(cs.paddingRight) || 0, t: parseFloat(cs.paddingTop) || 0, b: parseFloat(cs.paddingBottom) || 0 };
 }
-function fitBox() {
-  const s = safe(), W = innerWidth - s.l - s.r, H = innerHeight - s.t - s.b;
+function fitBox() {   // 화면 전체(노치 쪽 여백 포함)를 다 씀
+  const W = innerWidth, H = innerHeight;
   const k = Math.min(W / 2000, H / 1125);
-  return { k, x: s.l + (W - 2000 * k) / 2, y: s.t + (H - 1125 * k) / 2 };
+  return { k, x: (W - 2000 * k) / 2, y: (H - 1125 * k) / 2 };
 }
 function fit() {
   const { k, x, y } = fitBox();
@@ -1713,9 +1710,7 @@ const slideObserver = new IntersectionObserver(es => es.forEach(e => {
 }), { root: charPage, threshold: .35 });
 
 function fitSlides() {
-  const s = safe();
-  charPage.style.setProperty('--k', (slidesEl.clientWidth - s.l - s.r) / 2000);
-  charPage.style.setProperty('--sl', s.l + 'px');
+  charPage.style.setProperty('--k', slidesEl.clientWidth / 2000);   // 노치 쪽까지 꽉 채움
 }
 addEventListener('resize', fitSlides);
 // 휴대폰을 돌린 직후에는 노치 여백 값이 늦게 바뀌어서 한 번 더 맞춤
