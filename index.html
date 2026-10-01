@@ -1757,8 +1757,8 @@ function fillChar(c) {
     const slide = document.createElement('div');
     slide.className = 'slide';
     const bgItem = items.find(it => it.cls === 'bg' || it.box === 'fill');
-    if (bgItem && bgItem.box) slide.style.backgroundColor = bgItem.color;
-    else if (bgItem) slide.style.backgroundImage = `url("${IMG[bgItem.src]}")`;
+    if (bgItem && bgItem.box) { slide.style.backgroundColor = bgItem.color; slide.dataset.fill = bgItem.color; }
+    else if (bgItem) { slide.style.backgroundImage = `url("${IMG[bgItem.src]}")`; slide.dataset.bg = IMG[bgItem.src]; }
     else slide.style.backgroundColor = '#fff';
     const st = document.createElement('div');
     st.className = 'st';
@@ -1943,6 +1943,7 @@ function setMode(m) {
   btn12.classList.toggle('on', m === 'b');
   btnStamp.classList.toggle('on', m === 'c');
   highlight(null);
+  if (typeof paintEdges === 'function') setTimeout(paintEdges, 50);
 }
 function fitMap() {
   const { k, x, y } = fitBox();
@@ -1953,6 +1954,66 @@ fitMap();
 setMode('a');
 
 render();
+
+/* ---- 아이폰 가로 화면의 노치 쪽 여백 색: 지금 보이는 화면 왼쪽·오른쪽 가장자리 색으로 맞춤 ----
+   (브라우저가 그 여백에 페이지를 그려 주지 않아도 바탕색은 보이므로, 바탕색을 화면에 맞춰 바꿈) */
+const edgeCache = new Map();
+function edgeColumn(src) {          // 그림의 왼쪽 끝 세로줄 색 16개 [r,g,b]
+  if (edgeCache.has(src)) return edgeCache.get(src);
+  const im = new Image();
+  const done = () => {
+    try {
+      const cv = document.createElement('canvas'); cv.width = 4; cv.height = 16;
+      const cx = cv.getContext('2d', { willReadFrequently: true });
+      cx.drawImage(im, 0, 0, Math.max(2, im.naturalWidth * .01), im.naturalHeight, 0, 0, 4, 16);
+      const d = cx.getImageData(0, 0, 4, 16).data, col = [];
+      for (let y = 0; y < 16; y++) col.push([d[y * 16 + 4], d[y * 16 + 5], d[y * 16 + 6]]);
+      edgeCache.set(src, col);
+    } catch (e) { edgeCache.set(src, null); }
+    paintEdges();
+  };
+  edgeCache.set(src, undefined);
+  im.src = src;
+  if (im.complete && im.naturalWidth) setTimeout(done, 0);
+  else { im.onload = done; im.onerror = () => edgeCache.set(src, null); }
+  return undefined;
+}
+const hex = ([r, g, b]) => `rgb(${r},${g},${b})`;
+function slideColumn(slide) {
+  if (slide.dataset.fill) return Array(16).fill(slide.dataset.fill);
+  const src = slide.dataset.bg;
+  if (!src) return Array(16).fill('#fff');
+  const col = edgeColumn(src);
+  return col ? col.map(hex) : null;
+}
+function paintEdges() {
+  const v = Object.keys(views).find(k => views[k].classList.contains('on'));
+  let stops = null;
+  if (v === 'main') { const c = edgeColumn(IMG['L1']); if (c) stops = c.map(hex); }
+  else if (v === 'map') { const c = edgeColumn(IMG['map/bg_' + mapPage.dataset.mode]); if (c) stops = c.map(hex); }
+  else if (v === 'char') {
+    stops = [];
+    const slides = [...slidesEl.children], H = innerHeight;
+    for (let i = 0; i < 16; i++) {
+      const y = charPage.scrollTop + (i + .5) / 16 * H;
+      const sl = slides.find(sl => y >= sl.offsetTop && y < sl.offsetTop + sl.offsetHeight) || slides[slides.length - 1];
+      const col = sl && slideColumn(sl);
+      if (!col) { stops = null; break; }
+      stops.push(col[Math.min(15, Math.floor((y - sl.offsetTop) / sl.offsetHeight * 16))]);
+    }
+  }
+  if (!stops) return;
+  const g = `linear-gradient(${stops.map((c, i) => `${c} ${(i / 15 * 100).toFixed(1)}%`).join(', ')})`;
+  document.documentElement.style.background = g;
+  document.documentElement.style.backgroundAttachment = 'fixed';
+  document.body.style.background = 'transparent';
+}
+let edgeRaf = 0;
+const queueEdges = () => { if (!edgeRaf) edgeRaf = requestAnimationFrame(() => { edgeRaf = 0; paintEdges(); }); };
+charPage.addEventListener('scroll', queueEdges);
+addEventListener('hashchange', () => setTimeout(paintEdges, 600));
+addEventListener('resize', queueEdges);
+setTimeout(paintEdges, 300);
 
 /* 캐릭터 페이지 이미지는 메인 화면이 뜬 뒤 미리 풀어 둠 (눌렀을 때 바로 보이도록) */
 const warm = [];
