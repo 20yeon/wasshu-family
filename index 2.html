@@ -1718,8 +1718,6 @@ function fitSlides() {
   charPage.style.setProperty('--sl', s.l + 'px');
 }
 addEventListener('resize', fitSlides);
-// 휴대폰을 돌린 직후에는 노치 여백 값이 늦게 바뀌어서 한 번 더 맞춤
-addEventListener('orientationchange', () => setTimeout(() => { fit(); fitMap(); fitSlides(); }, 350));
 
 /* 아래로 스크롤 안내: 처음엔 1.2초 뒤 나타남 → 스크롤하면 사라짐 → 스크롤이 2.5초 멈췄는데
    아직 맨 아래(여유 200px)가 아니면 다시 나타남. 누르면 다음 장으로 */
