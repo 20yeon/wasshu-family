@@ -138,6 +138,9 @@
   .st .dash { left: 0; width: 2000px; height: 4px; background: repeating-linear-gradient(90deg, #fff 0 16px, transparent 16px 25px); background-position: -8px 0; }
   .st .ellipse { border-radius: 50%; filter: blur(10px); opacity: .85; animation: shadow 3.6s ease-in-out infinite; }
   .st .caption-box { background: #95d0f0; }
+  .st .slot-box { border: 4px dashed #d8d2c6; border-radius: 26px; background: #faf8f3; }
+  .st .comicp { opacity: 0; transform: translateY(30px) scale(.96); transition: opacity .5s ease, transform .6s cubic-bezier(.3,1.4,.5,1); }
+  .slide.in .st .comicp { opacity: 1; transform: none; }
   .st .blur { filter: blur(6px); opacity: .6; }
 
   .st .hero { animation: heroFloat 3.6s ease-in-out infinite; }
@@ -235,6 +238,11 @@
   #mapPage[data-mode="a"] .mbtn + .mbtn { animation-delay: .25s; }
   @keyframes nudge { 0%,80%,100% { transform: none; } 88% { transform: scale(1.07) rotate(-2deg); } 94% { transform: scale(1.03) rotate(1.5deg); } }
 
+  .mbub { position: absolute; width: 360px; height: auto; z-index: 20; pointer-events: none; opacity: 0;
+    transform: scale(.85) translateY(-10px); transform-origin: 50% 0;
+    transition: opacity .18s ease, transform .35s cubic-bezier(.3,1.5,.5,1); }
+  .mbub.up { transform-origin: 50% 100%; transform: scale(.85) translateY(10px); }
+  .mbub.on { opacity: 1; transform: none; }
   .mcard { opacity: 0; transform: translateX(-140px); pointer-events: none; transition: opacity .5s ease, transform .8s cubic-bezier(.3,1.2,.4,1); }
   #mapPage[data-mode="b"] #card12, #mapPage[data-mode="c"] #cardStamp { opacity: 1; transform: none; pointer-events: auto; transition-delay: .25s; }
   .mcard > img { position: absolute; left: 0; top: 0; width: 100%; height: auto; }
@@ -364,7 +372,7 @@
 </button>
 
 <script>
-const IMG = {"L1": "img/L1.webp", "L10": "img/L10.webp", "L11": "img/L11.webp", "L12": "img/L12.webp", "L13": "img/L13.webp", "L14": "img/L14.webp", "L15": "img/L15.webp", "L16": "img/L16.webp", "L17": "img/L17.webp", "L18": "img/L18.webp", "L19": "img/L19.webp", "L2": "img/L2.webp", "L20": "img/L20.webp", "L21": "img/L21.webp", "L22": "img/L22.webp", "L23": "img/L23.webp", "L24": "img/L24.webp", "L25": "img/L25.webp", "L26": "img/L26.webp", "L27": "img/L27.webp", "L28": "img/L28.webp", "L29": "img/L29.webp", "L3": "img/L3.webp", "L30": "img/L30.webp", "L31": "img/L31.webp", "L32": "img/L32.webp", "L4": "img/L4.webp", "L5": "img/L5.webp", "L6": "img/L6.webp", "L7": "img/L7.webp", "L8": "img/L8.webp", "L9": "img/L9.webp", "blue/bg01": "img/blue/bg01.webp", "blue/bg03": "img/blue/bg03.webp", "blue/bg04": "img/blue/bg04.webp", "blue/bg06": "img/blue/bg06.webp", "blue/bg07": "img/blue/bg07.webp", "blue/bg08": "img/blue/bg08.webp", "blue/rel_blue": "img/blue/rel_blue.webp", "blue/rel_duck": "img/blue/rel_duck.webp", "blue/rel_lotus": "img/blue/rel_lotus.webp", "blue/rel_owl": "img/blue/rel_owl.webp", "blue/star": "img/blue/star.webp", "blue/turn_title": "img/blue/turn_title.webp", "blue/x1": "img/blue/x1.webp", "blue/x10": "img/blue/x10.webp", "blue/x11": "img/blue/x11.webp", "blue/x12_04": "img/blue/x12_04.webp", "blue/x12_06": "img/blue/x12_06.webp", "blue/x12_07": "img/blue/x12_07.webp", "blue/x14": "img/blue/x14.webp", "blue/x16": "img/blue/x16.webp", "blue/x17": "img/blue/x17.webp", "blue/x19": "img/blue/x19.webp", "blue/x2": "img/blue/x2.webp", "blue/x20": "img/blue/x20.webp", "blue/x3": "img/blue/x3.webp", "blue/x4": "img/blue/x4.webp", "blue/x5_04": "img/blue/x5_04.webp", "blue/x5_05": "img/blue/x5_05.webp", "blue/x5_06": "img/blue/x5_06.webp", "blue/x5_08": "img/blue/x5_08.webp", "blue/x6": "img/blue/x6.webp", "blue/x7": "img/blue/x7.webp", "blue/x8": "img/blue/x8.webp", "blue/x8b": "img/blue/x8b.webp", "blue/x9": "img/blue/x9.webp", "duck/big": "img/duck/big.webp", "duck/x10": "img/duck/x10.webp", "duck/x11": "img/duck/x11.webp", "duck/x12": "img/duck/x12.webp", "duck/x15": "img/duck/x15.webp", "duck/x16": "img/duck/x16.webp", "duck/x17": "img/duck/x17.webp", "duck/x18": "img/duck/x18.webp", "duck/x19": "img/duck/x19.webp", "duck/x1_02": "img/duck/x1_02.webp", "duck/x20": "img/duck/x20.webp", "duck/x21": "img/duck/x21.webp", "duck/x23_01": "img/duck/x23_01.webp", "duck/x23_03": "img/duck/x23_03.webp", "duck/x23_04": "img/duck/x23_04.webp", "duck/x28": "img/duck/x28.webp", "duck/x2_02": "img/duck/x2_02.webp", "duck/x4": "img/duck/x4.webp", "duck/x6": "img/duck/x6.webp", "duck/x7": "img/duck/x7.webp", "duck/x9": "img/duck/x9.webp", "duck/xp": "img/duck/xp.webp", "lotus/big": "img/lotus/big.webp", "lotus/x1": "img/lotus/x1.webp", "lotus/x10": "img/lotus/x10.webp", "lotus/x11": "img/lotus/x11.webp", "lotus/x117": "img/lotus/x117.webp", "lotus/x12": "img/lotus/x12.webp", "lotus/x13": "img/lotus/x13.webp", "lotus/x14": "img/lotus/x14.webp", "lotus/x15": "img/lotus/x15.webp", "lotus/x16": "img/lotus/x16.webp", "lotus/x2": "img/lotus/x2.webp", "lotus/x25": "img/lotus/x25.webp", "lotus/x3": "img/lotus/x3.webp", "lotus/x4": "img/lotus/x4.webp", "lotus/x5": "img/lotus/x5.webp", "lotus/x6": "img/lotus/x6.webp", "lotus/x7_01": "img/lotus/x7_01.webp", "lotus/x7_03": "img/lotus/x7_03.webp", "lotus/x7_04": "img/lotus/x7_04.webp", "lotus/x8": "img/lotus/x8.webp", "lotus/xp": "img/lotus/xp.webp", "lotus/xp_copy": "img/lotus/xp_copy.webp", "map/bg_a": "img/map/bg_a.webp", "map/bg_b": "img/map/bg_b.webp", "map/bg_c": "img/map/bg_c.webp", "map/btn_12": "img/map/btn_12.webp", "map/btn_stamp": "img/map/btn_stamp.webp", "map/card_12": "img/map/card_12.webp", "map/card_stamp": "img/map/card_stamp.webp", "map/cloud": "img/map/cloud.webp", "map/f15": "img/map/f15.webp", "map/f16": "img/map/f16.webp", "map/f17": "img/map/f17.webp", "map/f18": "img/map/f18.webp", "map/line": "img/map/line.webp", "map/map": "img/map/map.webp", "map/p_bonggoksa": "img/map/p_bonggoksa.webp", "map/p_dogo": "img/map/p_dogo.webp", "map/p_flower": "img/map/p_flower.webp", "map/p_gokgyo": "img/map/p_gokgyo.webp", "map/p_gongseri": "img/map/p_gongseri.webp", "map/p_hyeonchungsa": "img/map/p_hyeonchungsa.webp", "map/p_jijunghae": "img/map/p_jijunghae.webp", "map/p_market": "img/map/p_market.webp", "map/p_museum": "img/map/p_museum.webp", "map/p_oeam": "img/map/p_oeam.webp", "map/p_onyang": "img/map/p_onyang.webp", "map/p_pinnacle": "img/map/p_pinnacle.webp", "map/p_sinjeongho": "img/map/p_sinjeongho.webp", "map/p_spavis": "img/map/p_spavis.webp", "map/p_yeonginsan": "img/map/p_yeonginsan.webp", "map/route": "img/map/route.webp", "owl/big": "img/owl/big.webp", "owl/x1": "img/owl/x1.webp", "owl/x10": "img/owl/x10.webp", "owl/x11": "img/owl/x11.webp", "owl/x13": "img/owl/x13.webp", "owl/x15": "img/owl/x15.webp", "owl/x16": "img/owl/x16.webp", "owl/x17": "img/owl/x17.webp", "owl/x18": "img/owl/x18.webp", "owl/x19_01": "img/owl/x19_01.webp", "owl/x19_03": "img/owl/x19_03.webp", "owl/x19_04": "img/owl/x19_04.webp", "owl/x28": "img/owl/x28.webp", "owl/x3": "img/owl/x3.webp", "owl/x4": "img/owl/x4.webp", "owl/x5": "img/owl/x5.webp", "owl/x6": "img/owl/x6.webp", "owl/x7": "img/owl/x7.webp", "owl/x8": "img/owl/x8.webp", "owl/x9": "img/owl/x9.webp", "owl/xp_copy": "img/owl/xp_copy.webp", "ui/scroll": "img/ui/scroll.webp", "m/blue_0_0": "img/m/blue_0_0.webp", "m/blue_1_1": "img/m/blue_1_1.webp", "m/blue_2_2": "img/m/blue_2_2.webp", "m/blue_3_3": "img/m/blue_3_3.webp", "m/blue_4_4": "img/m/blue_4_4.webp", "m/blue_5_5": "img/m/blue_5_5.webp", "m/blue_6_6": "img/m/blue_6_6.webp", "m/lotus_0_7": "img/m/lotus_0_7.webp", "m/lotus_1_8": "img/m/lotus_1_8.webp", "m/lotus_2_9": "img/m/lotus_2_9.webp", "m/lotus_3_10": "img/m/lotus_3_10.webp", "m/lotus_4_11": "img/m/lotus_4_11.webp", "m/lotus_5_12": "img/m/lotus_5_12.webp", "m/lotus_6_13": "img/m/lotus_6_13.webp", "m/duck_0_14": "img/m/duck_0_14.webp", "m/duck_1_15": "img/m/duck_1_15.webp", "m/duck_2_16": "img/m/duck_2_16.webp", "m/duck_3_17": "img/m/duck_3_17.webp", "m/duck_4_18": "img/m/duck_4_18.webp", "m/duck_5_19": "img/m/duck_5_19.webp", "m/duck_6_20": "img/m/duck_6_20.webp", "m/owl_0_21": "img/m/owl_0_21.webp", "m/owl_1_22": "img/m/owl_1_22.webp", "m/owl_2_23": "img/m/owl_2_23.webp", "m/owl_3_24": "img/m/owl_3_24.webp", "m/owl_4_25": "img/m/owl_4_25.webp", "m/owl_5_26": "img/m/owl_5_26.webp", "m/owl_6_27": "img/m/owl_6_27.webp", "font/jua-sub": "img/jua-sub.woff2"};
+const IMG = {"L1": "img/L1.webp", "L10": "img/L10.webp", "L11": "img/L11.webp", "L12": "img/L12.webp", "L13": "img/L13.webp", "L14": "img/L14.webp", "L15": "img/L15.webp", "L16": "img/L16.webp", "L17": "img/L17.webp", "L18": "img/L18.webp", "L19": "img/L19.webp", "L2": "img/L2.webp", "L20": "img/L20.webp", "L21": "img/L21.webp", "L22": "img/L22.webp", "L23": "img/L23.webp", "L24": "img/L24.webp", "L25": "img/L25.webp", "L26": "img/L26.webp", "L27": "img/L27.webp", "L28": "img/L28.webp", "L29": "img/L29.webp", "L3": "img/L3.webp", "L30": "img/L30.webp", "L31": "img/L31.webp", "L32": "img/L32.webp", "L4": "img/L4.webp", "L5": "img/L5.webp", "L6": "img/L6.webp", "L7": "img/L7.webp", "L8": "img/L8.webp", "L9": "img/L9.webp", "blue/bg01": "img/blue/bg01.webp", "blue/bg03": "img/blue/bg03.webp", "blue/bg04": "img/blue/bg04.webp", "blue/bg06": "img/blue/bg06.webp", "blue/bg07": "img/blue/bg07.webp", "blue/bg08": "img/blue/bg08.webp", "blue/rel_blue": "img/blue/rel_blue.webp", "blue/rel_duck": "img/blue/rel_duck.webp", "blue/rel_lotus": "img/blue/rel_lotus.webp", "blue/rel_owl": "img/blue/rel_owl.webp", "blue/star": "img/blue/star.webp", "blue/turn_title": "img/blue/turn_title.webp", "blue/x1": "img/blue/x1.webp", "blue/x10": "img/blue/x10.webp", "blue/x11": "img/blue/x11.webp", "blue/x12_04": "img/blue/x12_04.webp", "blue/x12_06": "img/blue/x12_06.webp", "blue/x12_07": "img/blue/x12_07.webp", "blue/x14": "img/blue/x14.webp", "blue/x16": "img/blue/x16.webp", "blue/x17": "img/blue/x17.webp", "blue/x19": "img/blue/x19.webp", "blue/x2": "img/blue/x2.webp", "blue/x20": "img/blue/x20.webp", "blue/x3": "img/blue/x3.webp", "blue/x4": "img/blue/x4.webp", "blue/x5_04": "img/blue/x5_04.webp", "blue/x5_05": "img/blue/x5_05.webp", "blue/x5_06": "img/blue/x5_06.webp", "blue/x5_08": "img/blue/x5_08.webp", "blue/x6": "img/blue/x6.webp", "blue/x7": "img/blue/x7.webp", "blue/x8": "img/blue/x8.webp", "blue/x8b": "img/blue/x8b.webp", "blue/x9": "img/blue/x9.webp", "comic/blue_1": "img/comic/blue_1.webp", "comic/blue_2": "img/comic/blue_2.webp", "comic/blue_3": "img/comic/blue_3.webp", "comic/blue_4": "img/comic/blue_4.webp", "comic/blue_5": "img/comic/blue_5.webp", "comic/blue_6": "img/comic/blue_6.webp", "comic/duck_1": "img/comic/duck_1.webp", "comic/duck_2": "img/comic/duck_2.webp", "comic/duck_3": "img/comic/duck_3.webp", "comic/duck_4": "img/comic/duck_4.webp", "comic/duck_5": "img/comic/duck_5.webp", "comic/duck_6": "img/comic/duck_6.webp", "comic/lotus_1": "img/comic/lotus_1.webp", "comic/lotus_2": "img/comic/lotus_2.webp", "comic/lotus_3": "img/comic/lotus_3.webp", "comic/lotus_4": "img/comic/lotus_4.webp", "comic/lotus_5": "img/comic/lotus_5.webp", "comic/lotus_6": "img/comic/lotus_6.webp", "comic/owl_1": "img/comic/owl_1.webp", "comic/owl_3": "img/comic/owl_3.webp", "comic/owl_4": "img/comic/owl_4.webp", "comic/owl_5": "img/comic/owl_5.webp", "comic/owl_6": "img/comic/owl_6.webp", "duck/big": "img/duck/big.webp", "duck/x10": "img/duck/x10.webp", "duck/x11": "img/duck/x11.webp", "duck/x12": "img/duck/x12.webp", "duck/x15": "img/duck/x15.webp", "duck/x16": "img/duck/x16.webp", "duck/x17": "img/duck/x17.webp", "duck/x18": "img/duck/x18.webp", "duck/x19": "img/duck/x19.webp", "duck/x1_02": "img/duck/x1_02.webp", "duck/x20": "img/duck/x20.webp", "duck/x21": "img/duck/x21.webp", "duck/x23_01": "img/duck/x23_01.webp", "duck/x23_03": "img/duck/x23_03.webp", "duck/x23_04": "img/duck/x23_04.webp", "duck/x28": "img/duck/x28.webp", "duck/x2_02": "img/duck/x2_02.webp", "duck/x4": "img/duck/x4.webp", "duck/x6": "img/duck/x6.webp", "duck/x7": "img/duck/x7.webp", "duck/x9": "img/duck/x9.webp", "duck/xp": "img/duck/xp.webp", "lotus/big": "img/lotus/big.webp", "lotus/x1": "img/lotus/x1.webp", "lotus/x10": "img/lotus/x10.webp", "lotus/x11": "img/lotus/x11.webp", "lotus/x117": "img/lotus/x117.webp", "lotus/x12": "img/lotus/x12.webp", "lotus/x13": "img/lotus/x13.webp", "lotus/x14": "img/lotus/x14.webp", "lotus/x15": "img/lotus/x15.webp", "lotus/x16": "img/lotus/x16.webp", "lotus/x2": "img/lotus/x2.webp", "lotus/x25": "img/lotus/x25.webp", "lotus/x3": "img/lotus/x3.webp", "lotus/x4": "img/lotus/x4.webp", "lotus/x5": "img/lotus/x5.webp", "lotus/x6": "img/lotus/x6.webp", "lotus/x7_01": "img/lotus/x7_01.webp", "lotus/x7_03": "img/lotus/x7_03.webp", "lotus/x7_04": "img/lotus/x7_04.webp", "lotus/x8": "img/lotus/x8.webp", "lotus/xp": "img/lotus/xp.webp", "lotus/xp_copy": "img/lotus/xp_copy.webp", "map/bg_a": "img/map/bg_a.webp", "map/bg_b": "img/map/bg_b.webp", "map/bg_c": "img/map/bg_c.webp", "map/btn_12": "img/map/btn_12.webp", "map/btn_stamp": "img/map/btn_stamp.webp", "map/bubble/bonggoksa": "img/map/bubble/bonggoksa.webp", "map/bubble/bonggoksa_up": "img/map/bubble/bonggoksa_up.webp", "map/bubble/flower": "img/map/bubble/flower.webp", "map/bubble/gokgyo": "img/map/bubble/gokgyo.webp", "map/bubble/gongseri": "img/map/bubble/gongseri.webp", "map/bubble/hyeonchungsa": "img/map/bubble/hyeonchungsa.webp", "map/bubble/jijunghae": "img/map/bubble/jijunghae.webp", "map/bubble/museum": "img/map/bubble/museum.webp", "map/bubble/oeam": "img/map/bubble/oeam.webp", "map/bubble/oeam_up": "img/map/bubble/oeam_up.webp", "map/bubble/pinnacle": "img/map/bubble/pinnacle.webp", "map/bubble/sinjeongho": "img/map/bubble/sinjeongho.webp", "map/bubble/spa": "img/map/bubble/spa.webp", "map/bubble/yeonginsan": "img/map/bubble/yeonginsan.webp", "map/card_12": "img/map/card_12.webp", "map/card_stamp": "img/map/card_stamp.webp", "map/cloud": "img/map/cloud.webp", "map/f15": "img/map/f15.webp", "map/f16": "img/map/f16.webp", "map/f17": "img/map/f17.webp", "map/f18": "img/map/f18.webp", "map/line": "img/map/line.webp", "map/map": "img/map/map.webp", "map/p_bonggoksa": "img/map/p_bonggoksa.webp", "map/p_dogo": "img/map/p_dogo.webp", "map/p_flower": "img/map/p_flower.webp", "map/p_gokgyo": "img/map/p_gokgyo.webp", "map/p_gongseri": "img/map/p_gongseri.webp", "map/p_hyeonchungsa": "img/map/p_hyeonchungsa.webp", "map/p_jijunghae": "img/map/p_jijunghae.webp", "map/p_market": "img/map/p_market.webp", "map/p_museum": "img/map/p_museum.webp", "map/p_oeam": "img/map/p_oeam.webp", "map/p_onyang": "img/map/p_onyang.webp", "map/p_pinnacle": "img/map/p_pinnacle.webp", "map/p_sinjeongho": "img/map/p_sinjeongho.webp", "map/p_spavis": "img/map/p_spavis.webp", "map/p_yeonginsan": "img/map/p_yeonginsan.webp", "map/route": "img/map/route.webp", "owl/big": "img/owl/big.webp", "owl/x1": "img/owl/x1.webp", "owl/x10": "img/owl/x10.webp", "owl/x11": "img/owl/x11.webp", "owl/x13": "img/owl/x13.webp", "owl/x15": "img/owl/x15.webp", "owl/x16": "img/owl/x16.webp", "owl/x17": "img/owl/x17.webp", "owl/x18": "img/owl/x18.webp", "owl/x19_01": "img/owl/x19_01.webp", "owl/x19_03": "img/owl/x19_03.webp", "owl/x19_04": "img/owl/x19_04.webp", "owl/x28": "img/owl/x28.webp", "owl/x3": "img/owl/x3.webp", "owl/x4": "img/owl/x4.webp", "owl/x5": "img/owl/x5.webp", "owl/x6": "img/owl/x6.webp", "owl/x7": "img/owl/x7.webp", "owl/x8": "img/owl/x8.webp", "owl/x9": "img/owl/x9.webp", "owl/xp_copy": "img/owl/xp_copy.webp", "ui/scroll": "img/ui/scroll.webp", "m/blue_0_0": "img/m/blue_0_0.webp", "m/blue_1_1": "img/m/blue_1_1.webp", "m/blue_2_2": "img/m/blue_2_2.webp", "m/blue_3_3": "img/m/blue_3_3.webp", "m/blue_4_4": "img/m/blue_4_4.webp", "m/blue_5_5": "img/m/blue_5_5.webp", "m/blue_6_6": "img/m/blue_6_6.webp", "m/lotus_0_7": "img/m/lotus_0_7.webp", "m/lotus_1_8": "img/m/lotus_1_8.webp", "m/lotus_2_9": "img/m/lotus_2_9.webp", "m/lotus_3_10": "img/m/lotus_3_10.webp", "m/lotus_4_11": "img/m/lotus_4_11.webp", "m/lotus_5_12": "img/m/lotus_5_12.webp", "m/lotus_6_13": "img/m/lotus_6_13.webp", "m/duck_0_14": "img/m/duck_0_14.webp", "m/duck_1_15": "img/m/duck_1_15.webp", "m/duck_2_16": "img/m/duck_2_16.webp", "m/duck_3_17": "img/m/duck_3_17.webp", "m/duck_4_18": "img/m/duck_4_18.webp", "m/duck_5_19": "img/m/duck_5_19.webp", "m/duck_6_20": "img/m/duck_6_20.webp", "m/owl_0_21": "img/m/owl_0_21.webp", "m/owl_1_22": "img/m/owl_1_22.webp", "m/owl_2_23": "img/m/owl_2_23.webp", "m/owl_3_24": "img/m/owl_3_24.webp", "m/owl_4_25": "img/m/owl_4_25.webp", "m/owl_5_26": "img/m/owl_5_26.webp", "m/owl_6_27": "img/m/owl_6_27.webp", "font/jua-sub": "img/jua-sub.woff2"};
 // 웹 버전에서 휴대폰·태블릿이면 더 작은 이미지(img-m/)를 씀 — 메모리 절약
 if (matchMedia('(pointer: coarse)').matches) for (const k in IMG) if (/^img\/.*\.webp$/.test(IMG[k])) IMG[k] = IMG[k].replace(/^img\//, 'img-m/');
 const PAGES = {
@@ -479,11 +487,56 @@ const PAGES = {
   ],
   [
    {
-    "src": "blue/x16",
-    "x": 375,
-    "y": 66,
-    "w": 1212,
-    "cls": "comic"
+    "box": "fill",
+    "color": "#ffffff"
+   },
+   {
+    "src": "comic/blue_1",
+    "x": 370.0,
+    "y": 148.3,
+    "w": 400.0,
+    "cls": "comicp",
+    "n": 1
+   },
+   {
+    "src": "comic/blue_2",
+    "x": 800.0,
+    "y": 149.3,
+    "w": 400.0,
+    "cls": "comicp",
+    "n": 2
+   },
+   {
+    "src": "comic/blue_3",
+    "x": 1233.2,
+    "y": 147.5,
+    "w": 393.6,
+    "cls": "comicp",
+    "n": 3
+   },
+   {
+    "src": "comic/blue_4",
+    "x": 370.0,
+    "y": 579.9,
+    "w": 400.0,
+    "cls": "comicp",
+    "n": 4
+   },
+   {
+    "src": "comic/blue_5",
+    "x": 800.0,
+    "y": 583.1,
+    "w": 400.0,
+    "cls": "comicp",
+    "n": 5
+   },
+   {
+    "src": "comic/blue_6",
+    "x": 1230.0,
+    "y": 582.7,
+    "w": 400.0,
+    "cls": "comicp",
+    "n": 6
    },
    {
     "src": "blue/x5_05",
@@ -491,13 +544,6 @@ const PAGES = {
     "y": 90,
     "w": 217,
     "cls": "tag"
-   },
-   {
-    "box": "caption",
-    "x": 383,
-    "y": 930,
-    "w": 1212,
-    "h": 107
    }
   ],
   [
@@ -756,11 +802,56 @@ const PAGES = {
   ],
   [
    {
-    "src": "blue/x16",
-    "x": 375,
-    "y": 66,
-    "w": 1212,
-    "cls": "comic"
+    "box": "fill",
+    "color": "#ffffff"
+   },
+   {
+    "src": "comic/lotus_1",
+    "x": 370.0,
+    "y": 148.1,
+    "w": 400.0,
+    "cls": "comicp",
+    "n": 1
+   },
+   {
+    "src": "comic/lotus_2",
+    "x": 810.6,
+    "y": 147.5,
+    "w": 378.8,
+    "cls": "comicp",
+    "n": 2
+   },
+   {
+    "src": "comic/lotus_3",
+    "x": 1238.8,
+    "y": 147.5,
+    "w": 382.4,
+    "cls": "comicp",
+    "n": 3
+   },
+   {
+    "src": "comic/lotus_4",
+    "x": 375.0,
+    "y": 577.5,
+    "w": 390.0,
+    "cls": "comicp",
+    "n": 4
+   },
+   {
+    "src": "comic/lotus_5",
+    "x": 803.0,
+    "y": 577.5,
+    "w": 394.0,
+    "cls": "comicp",
+    "n": 5
+   },
+   {
+    "src": "comic/lotus_6",
+    "x": 1234.8,
+    "y": 577.5,
+    "w": 390.4,
+    "cls": "comicp",
+    "n": 6
    },
    {
     "src": "lotus/x10",
@@ -1038,11 +1129,56 @@ const PAGES = {
   ],
   [
    {
-    "src": "blue/x16",
-    "x": 375,
-    "y": 66,
-    "w": 1212,
-    "cls": "comic"
+    "box": "fill",
+    "color": "#ffffff"
+   },
+   {
+    "src": "comic/duck_1",
+    "x": 370.0,
+    "y": 147.9,
+    "w": 400.0,
+    "cls": "comicp",
+    "n": 1
+   },
+   {
+    "src": "comic/duck_2",
+    "x": 800.0,
+    "y": 148.9,
+    "w": 400.0,
+    "cls": "comicp",
+    "n": 2
+   },
+   {
+    "src": "comic/duck_3",
+    "x": 1237.0,
+    "y": 147.5,
+    "w": 386.0,
+    "cls": "comicp",
+    "n": 3
+   },
+   {
+    "src": "comic/duck_4",
+    "x": 370.0,
+    "y": 577.9,
+    "w": 400.0,
+    "cls": "comicp",
+    "n": 4
+   },
+   {
+    "src": "comic/duck_5",
+    "x": 802.2,
+    "y": 577.5,
+    "w": 395.6,
+    "cls": "comicp",
+    "n": 5
+   },
+   {
+    "src": "comic/duck_6",
+    "x": 1230.8,
+    "y": 577.5,
+    "w": 398.4,
+    "cls": "comicp",
+    "n": 6
    },
    {
     "src": "duck/x15",
@@ -1329,11 +1465,56 @@ const PAGES = {
   ],
   [
    {
-    "src": "blue/x16",
-    "x": 375,
-    "y": 66,
-    "w": 1212,
-    "cls": "comic"
+    "box": "fill",
+    "color": "#ffffff"
+   },
+   {
+    "src": "comic/owl_1",
+    "x": 373.6,
+    "y": 147.5,
+    "w": 392.8,
+    "cls": "comicp",
+    "n": 1
+   },
+   {
+    "box": "slot",
+    "x": 814,
+    "y": 161.5,
+    "w": 372,
+    "h": 372,
+    "n": 2
+   },
+   {
+    "src": "comic/owl_3",
+    "x": 1232.4,
+    "y": 147.5,
+    "w": 395.2,
+    "cls": "comicp",
+    "n": 3
+   },
+   {
+    "src": "comic/owl_4",
+    "x": 376.4,
+    "y": 577.5,
+    "w": 387.2,
+    "cls": "comicp",
+    "n": 4
+   },
+   {
+    "src": "comic/owl_5",
+    "x": 802.4,
+    "y": 577.5,
+    "w": 395.2,
+    "cls": "comicp",
+    "n": 5
+   },
+   {
+    "src": "comic/owl_6",
+    "x": 1236.6,
+    "y": 577.5,
+    "w": 386.8,
+    "cls": "comicp",
+    "n": 6
    },
    {
     "src": "owl/x10",
@@ -1500,7 +1681,7 @@ const PAGES = {
  ]
 };
 // 웹 버전 + 휴대폰: 장마다 움직이지 않는 레이어를 미리 합친 데이터로 (없으면 null)
-const PAGES_M = {"blue": [[{"src": "blue/bg01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"src": "blue/x6", "x": 702, "y": 262, "w": 287, "cls": "spin"}, {"src": "blue/x7", "x": 1761, "y": 82, "w": 287, "cls": "spin"}, {"src": "blue/star", "x": -2, "y": 594, "w": 320, "cls": "spin"}, {"src": "blue/x14", "x": 178, "y": 958, "w": 424, "cls": "shadow"}, {"src": "blue/x11", "x": 19, "y": 117, "w": 821, "cls": "hero"}, {"src": "m/blue_0_0", "x": 33, "y": 20, "w": 1924, "cls": "flat"}, {"src": "blue/x8", "x": 638, "y": 105, "w": 423, "cls": "pop"}, {"src": "blue/x8b", "x": 844, "y": 780, "w": 375, "cls": "sticker"}, {"src": "blue/x9", "x": 1224, "y": 760, "w": 364, "cls": "sticker"}, {"src": "blue/x10", "x": 1594, "y": 775, "w": 360, "cls": "sticker"}], [{"src": "m/blue_1_1", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_2_2", "x": 74, "y": 64, "w": 1524, "cls": "flat"}], [{"src": "m/blue_3_3", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_4_4", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_5_5", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_6_6", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "blue/x5_08", "x": 78, "y": 82, "w": 277, "cls": "tag"}]], "lotus": [[{"src": "lotus/x7_01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"box": "ellipse", "x": 250, "y": 961, "w": 400, "h": 68, "color": "#2fa3e3"}, {"src": "lotus/x1", "x": 718, "y": 292, "w": 239, "cls": "spin"}, {"src": "lotus/x2", "x": -55, "y": 700, "w": 283, "cls": "spin"}, {"src": "lotus/x3", "x": 1718, "y": 90, "w": 283, "cls": "spin"}, {"src": "lotus/big", "x": 179, "y": 343, "w": 566, "rot": 0, "cls": "hero"}, {"src": "m/lotus_0_7", "x": 33, "y": 20, "w": 1924, "cls": "flat"}, {"src": "lotus/x25", "x": 508, "y": 137, "w": 464, "cls": "pop"}, {"src": "lotus/x4", "x": 872, "y": 730, "w": 354, "cls": "sticker"}, {"src": "lotus/x5", "x": 1218, "y": 764, "w": 360, "cls": "sticker"}, {"src": "lotus/x6", "x": 1587, "y": 734, "w": 327, "cls": "sticker"}], [{"src": "m/lotus_1_8", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_2_9", "x": 74, "y": 64, "w": 1516, "cls": "flat"}], [{"src": "m/lotus_3_10", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_4_11", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_5_12", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_6_13", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "lotus/x13", "x": 78, "y": 82, "w": 278, "cls": "tag"}]], "duck": [[{"src": "duck/x23_01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"box": "ellipse", "x": 230, "y": 971, "w": 380, "h": 64, "color": "#e2559c"}, {"src": "duck/x4", "x": 1748, "y": 76, "w": 322, "cls": "spin"}, {"src": "duck/x2_02", "x": -30, "y": 690, "w": 321, "cls": "spin"}, {"src": "duck/xp", "x": 546, "y": 308, "w": 321, "cls": "spin"}, {"src": "duck/big", "x": 128, "y": 214, "w": 594, "rot": 0, "cls": "hero"}, {"src": "m/duck_0_14", "x": 32, "y": 20, "w": 1925, "cls": "flat"}, {"src": "duck/x28", "x": 584, "y": 93, "w": 425, "cls": "pop"}, {"src": "duck/x7", "x": 958, "y": 750, "w": 279, "cls": "sticker"}, {"src": "duck/x9", "x": 1254, "y": 736, "w": 284, "cls": "sticker"}, {"src": "duck/x10", "x": 1568, "y": 732, "w": 289, "cls": "sticker"}], [{"src": "m/duck_1_15", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_2_16", "x": 74, "y": 64, "w": 1516, "cls": "flat"}], [{"src": "m/duck_3_17", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_4_18", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_5_19", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_6_20", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "duck/x17", "x": 77, "y": 82, "w": 278, "cls": "tag"}]], "owl": [[{"src": "owl/x19_01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"box": "ellipse", "x": 253, "y": 961, "w": 390, "h": 68, "color": "#4dba6c"}, {"src": "owl/xp_copy", "x": 1745, "y": 40, "w": 300, "cls": "sway blur", "rot": 160}, {"src": "owl/xp_copy", "x": 745, "y": 330, "w": 230, "cls": "sway blur", "rot": -40}, {"src": "owl/x1", "x": 372, "y": 250, "w": 210, "cls": "sway"}, {"src": "owl/xp_copy", "x": -26, "y": 718, "w": 315, "cls": "sway"}, {"src": "owl/big", "x": -1, "y": 310, "w": 858, "rot": 25, "cls": "hero"}, {"src": "m/owl_0_21", "x": 32, "y": 20, "w": 1925, "cls": "flat"}, {"src": "owl/x28", "x": 537, "y": 137, "w": 436, "cls": "pop"}, {"src": "owl/x5", "x": 804, "y": 725, "w": 397, "cls": "sticker"}, {"src": "owl/x6", "x": 1204, "y": 728, "w": 352, "cls": "sticker"}, {"src": "owl/x7", "x": 1539, "y": 734, "w": 388, "cls": "sticker"}], [{"src": "m/owl_1_22", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_2_23", "x": 74, "y": 64, "w": 1516, "cls": "flat"}], [{"src": "m/owl_3_24", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_4_25", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_5_26", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_6_27", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "owl/x13", "x": 78, "y": 83, "w": 277, "cls": "tag"}]]};
+const PAGES_M = {"blue": [[{"src": "blue/bg01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"src": "blue/x6", "x": 702, "y": 262, "w": 287, "cls": "spin"}, {"src": "blue/x7", "x": 1761, "y": 82, "w": 287, "cls": "spin"}, {"src": "blue/star", "x": -2, "y": 594, "w": 320, "cls": "spin"}, {"src": "blue/x14", "x": 178, "y": 958, "w": 424, "cls": "shadow"}, {"src": "blue/x11", "x": 19, "y": 117, "w": 821, "cls": "hero"}, {"src": "m/blue_0_0", "x": 33, "y": 20, "w": 1924, "cls": "flat"}, {"src": "blue/x8", "x": 638, "y": 105, "w": 423, "cls": "pop"}, {"src": "blue/x8b", "x": 844, "y": 780, "w": 375, "cls": "sticker"}, {"src": "blue/x9", "x": 1224, "y": 760, "w": 364, "cls": "sticker"}, {"src": "blue/x10", "x": 1594, "y": 775, "w": 360, "cls": "sticker"}], [{"src": "m/blue_1_1", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_2_2", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_3_3", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_4_4", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_5_5", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/blue_6_6", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "blue/x5_08", "x": 78, "y": 82, "w": 277, "cls": "tag"}]], "lotus": [[{"src": "lotus/x7_01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"box": "ellipse", "x": 250, "y": 961, "w": 400, "h": 68, "color": "#2fa3e3"}, {"src": "lotus/x1", "x": 718, "y": 292, "w": 239, "cls": "spin"}, {"src": "lotus/x2", "x": -55, "y": 700, "w": 283, "cls": "spin"}, {"src": "lotus/x3", "x": 1718, "y": 90, "w": 283, "cls": "spin"}, {"src": "lotus/big", "x": 179, "y": 343, "w": 566, "rot": 0, "cls": "hero"}, {"src": "m/lotus_0_7", "x": 33, "y": 20, "w": 1924, "cls": "flat"}, {"src": "lotus/x25", "x": 508, "y": 137, "w": 464, "cls": "pop"}, {"src": "lotus/x4", "x": 872, "y": 730, "w": 354, "cls": "sticker"}, {"src": "lotus/x5", "x": 1218, "y": 764, "w": 360, "cls": "sticker"}, {"src": "lotus/x6", "x": 1587, "y": 734, "w": 327, "cls": "sticker"}], [{"src": "m/lotus_1_8", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_2_9", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_3_10", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_4_11", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_5_12", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/lotus_6_13", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "lotus/x13", "x": 78, "y": 82, "w": 278, "cls": "tag"}]], "duck": [[{"src": "duck/x23_01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"box": "ellipse", "x": 230, "y": 971, "w": 380, "h": 64, "color": "#e2559c"}, {"src": "duck/x4", "x": 1748, "y": 76, "w": 322, "cls": "spin"}, {"src": "duck/x2_02", "x": -30, "y": 690, "w": 321, "cls": "spin"}, {"src": "duck/xp", "x": 546, "y": 308, "w": 321, "cls": "spin"}, {"src": "duck/big", "x": 128, "y": 214, "w": 594, "rot": 0, "cls": "hero"}, {"src": "m/duck_0_14", "x": 32, "y": 20, "w": 1925, "cls": "flat"}, {"src": "duck/x28", "x": 584, "y": 93, "w": 425, "cls": "pop"}, {"src": "duck/x7", "x": 958, "y": 750, "w": 279, "cls": "sticker"}, {"src": "duck/x9", "x": 1254, "y": 736, "w": 284, "cls": "sticker"}, {"src": "duck/x10", "x": 1568, "y": 732, "w": 289, "cls": "sticker"}], [{"src": "m/duck_1_15", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_2_16", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_3_17", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_4_18", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_5_19", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/duck_6_20", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "duck/x17", "x": 77, "y": 82, "w": 278, "cls": "tag"}]], "owl": [[{"src": "owl/x19_01", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x3", "x": 61, "y": 52, "w": 1802, "cls": "twinkle"}, {"box": "ellipse", "x": 253, "y": 961, "w": 390, "h": 68, "color": "#4dba6c"}, {"src": "owl/xp_copy", "x": 1745, "y": 40, "w": 300, "cls": "sway blur", "rot": 160}, {"src": "owl/xp_copy", "x": 745, "y": 330, "w": 230, "cls": "sway blur", "rot": -40}, {"src": "owl/x1", "x": 372, "y": 250, "w": 210, "cls": "sway"}, {"src": "owl/xp_copy", "x": -26, "y": 718, "w": 315, "cls": "sway"}, {"src": "owl/big", "x": -1, "y": 310, "w": 858, "rot": 25, "cls": "hero"}, {"src": "m/owl_0_21", "x": 32, "y": 20, "w": 1925, "cls": "flat"}, {"src": "owl/x28", "x": 537, "y": 137, "w": 436, "cls": "pop"}, {"src": "owl/x5", "x": 804, "y": 725, "w": 397, "cls": "sticker"}, {"src": "owl/x6", "x": 1204, "y": 728, "w": 352, "cls": "sticker"}, {"src": "owl/x7", "x": 1539, "y": 734, "w": 388, "cls": "sticker"}], [{"src": "m/owl_1_22", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_2_23", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_3_24", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_4_25", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_5_26", "x": 0, "y": 0, "w": 2000, "cls": "bg"}], [{"src": "m/owl_6_27", "x": 0, "y": 0, "w": 2000, "cls": "bg"}, {"src": "blue/x19", "x": 978, "y": 764, "w": 56, "cls": "beat"}, {"src": "blue/rel_blue", "x": 501, "y": 225, "w": 340.5, "cls": "rel", "go": "blue"}, {"src": "blue/rel_duck", "x": 1180, "y": 225, "w": 337.5, "cls": "rel", "go": "duck"}, {"src": "blue/rel_owl", "x": 501, "y": 646.5, "w": 340.5, "cls": "rel", "go": "owl"}, {"src": "blue/rel_lotus", "x": 1180, "y": 651.5, "w": 337.5, "cls": "rel", "go": "lotus"}, {"src": "L9", "x": 747, "y": 903, "w": 491, "cls": "building", "go": "map"}, {"src": "blue/x17", "x": 910, "y": 847, "w": 161, "cls": "pop bldg-say"}, {"src": "owl/x13", "x": 78, "y": 83, "w": 277, "cls": "tag"}]]};
 const TOUCH = matchMedia('(pointer: coarse)').matches;
 // [진단용] 주소에 noedge / noanim / nobg / one / noflat / nofix 를 붙이면 해당 기능을 끔
 const FLAG = new Set(location.search.slice(1).split('&'));
@@ -1849,6 +2030,7 @@ function fillChar(c) {
         else if (it.box === 'dash') { el.className = 'dash'; el.style.top = it.y + 'px'; }
         else if (it.box === 'ellipse') { el.className = 'ellipse'; el.style.background = it.color; }
         else if (it.box === 'caption') { el.className = 'caption-box'; }
+        else if (it.box === 'slot') { el.className = 'slot-box'; }
         if (it.x != null) Object.assign(el.style, { left: it.x + 'px', top: it.y + 'px', width: it.w + 'px', height: it.h + 'px' });
       } else {
         el = new Image();
@@ -1861,6 +2043,7 @@ function fillChar(c) {
         if (it.rot) el.style.rotate = it.rot + 'deg';
         if (/spin|sway/.test(it.cls || '')) el.style.animationDelay = (-Math.random() * 8).toFixed(2) + 's';
         if (it.cls === 'sticker') el.style.transitionDelay = (n++ * .12) + 's';
+        if (it.cls === 'comicp') el.style.transitionDelay = ((it.n - 1) * .12) + 's';   // 만화 칸이 1→6 순서로 나타남
         if (it.go) {
           const show = () => it.go === 'map' ? st.classList.add('bhover') : showSay(st, el, it.go);
           const hide = () => { st.classList.remove('bhover'); hideSay(st); };
@@ -1951,6 +2134,16 @@ Object.entries(SPOTS).forEach(([k, [x, y, w]]) => {
   if (k === 'market') el.classList.add('no-b');                 // 전통시장은 12선이 아님
   if (STAMPS.some(s => s[0] === k)) el.classList.add('stamp');
   spotEl[k] = el;
+  // 마우스를 올리면 커지면서 설명 말풍선도 / 휴대폰은 누르면
+  el.addEventListener('pointerenter', e => { if (e.pointerType !== 'touch') showBubble(k); });
+  el.addEventListener('pointerleave', e => { if (e.pointerType !== 'touch') showBubble(null); });
+  el.addEventListener('click', e => {
+    if (lastPointer !== 'touch') return;
+    e.stopPropagation();
+    const on = !el.classList.contains('hl');
+    card12.querySelectorAll('.hot.tap').forEach(t => t.classList.remove('tap'));
+    highlight(on ? k : null);
+  });
 });
 const pinEl = {};
 STAMPS.forEach(([k, x, y, color], i) => {
@@ -2011,6 +2204,31 @@ mapPage.addEventListener('click', () => { card12.querySelectorAll('.hot.tap').fo
 function highlight(k) {
   Object.entries(spotEl).forEach(([key, el]) => el.classList.toggle('hl', key === k));
   Object.entries(pinEl).forEach(([key, el]) => el.classList.toggle('hl', key === k));
+  showBubble(k);
+}
+/* 관광지 설명 말풍선 (요청자가 준 그림). 3대 온천 말풍선은 온천 세 곳이 같이 씀 */
+const BUBBLE = { gongseri: 'gongseri', yeonginsan: 'yeonginsan', oeam: 'oeam', gokgyo: 'gokgyo', jijunghae: 'jijunghae',
+  hyeonchungsa: 'hyeonchungsa', spavis: 'spa', dogo: 'spa', onyang: 'spa', museum: 'museum', pinnacle: 'pinnacle',
+  bonggoksa: 'bonggoksa', flower: 'flower', sinjeongho: 'sinjeongho' };
+const BUBBLE_UP = { oeam: 1, bonggoksa: 1 };   // 꼬리가 아래인 그림도 있는 것 (화면 아래쪽 장소는 아이콘 위에 띄움)
+const BW = 360;   // 말풍선 폭 (2000×1125 기준)
+const bub = new Image();
+bub.className = 'mbub'; bub.alt = '';
+mstage.appendChild(bub);
+function showBubble(k) {
+  const name = k && BUBBLE[k];
+  if (!name || !spotEl[k] || getComputedStyle(spotEl[k]).opacity < .5) { bub.classList.remove('on'); return; }
+  const [x, y, w] = SPOTS[k], el = spotEl[k];
+  const h = w * (el.naturalHeight / el.naturalWidth || .8);
+  const [mx, my, s] = MAP_POS[mapPage.dataset.mode];
+  const cx = mx + x * s, top = my + (y - h / 2) * s, bottom = my + (y + h / 2) * s;
+  const bh = BW * .9;
+  const up = BUBBLE_UP[name] && bottom + bh > 1105;
+  bub.src = IMG['map/bubble/' + name + (up ? '_up' : '')];
+  bub.classList.toggle('up', !!up);
+  bub.style.left = Math.min(1990 - BW, Math.max(10, cx - BW / 2)) + 'px';
+  bub.style.top = (up ? top - bh - 6 : Math.min(1115 - bh, bottom + 2)) + 'px';
+  bub.classList.remove('on'); void bub.offsetWidth; bub.classList.add('on');
 }
 function setMode(m) {
   mapPage.dataset.mode = m;
